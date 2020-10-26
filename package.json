@@ -1,0 +1,22 @@
+{
+  "name": "ft-sep20-backend-examples",
+  "version": "1.0.0",
+  "description": "Backend examples for educational purposes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheBridge-FullStackDeveloper/ft-sep20-Backend-examples.git"
+  },
+  "author": "The Bridge",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/TheBridge-FullStackDeveloper/ft-sep20-Backend-examples/issues"
+  },
+  "homepage": "https://github.com/TheBridge-FullStackDeveloper/ft-sep20-Backend-examples#readme",
+  "dependencies": {
+    "mathjs": "^7.5.1"
+  }
+}
