@@ -12,7 +12,13 @@ const server = http.createServer((request, response) => {
   
   // Home
   if (request.url === "/") {
-    response.writeHead(200, { ...headers, 'Content-Type': 'text/html'});
+    response.writeHead(200, headers);
+    /*
+    response.writeHead(200, {
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'text/html'
+    })
+    */;
     response.write('<h1>Welcome to my home</h1>');
   }
 
@@ -24,8 +30,10 @@ const server = http.createServer((request, response) => {
 
   else // getJSON
   if (request.url === "/getJSON") {
+    let objeto = { vuelta: 56 };
+
     response.writeHead(200, { ...headers, 'Content-Type': 'application/json' });
-    response.write(JSON);
+    response.write(JSON.stringify(objeto));
   }
 
   // Not found
