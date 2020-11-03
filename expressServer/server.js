@@ -13,7 +13,7 @@ const server = express();
 const listenPort = 8080;
 
 // Folder with my frontend app
-const staticFilesPath = express.static('public');
+const staticFilesPath = express.static(__dirname + '/public');
 server.use(staticFilesPath);
 
 // JSON support
