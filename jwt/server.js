@@ -116,7 +116,7 @@ server.post("/register", (req, res) => {
     }
 });
 
-server.get("/login", (req, res) => {
+server.post("/login", (req, res) => {
     const { username, password } = req.body;
     let JWT = req.cookies.jwt;
     //As I don't save the username and password, here is the username. Password: "[123]"
@@ -127,8 +127,8 @@ server.get("/login", (req, res) => {
     //If a JWT was sent, we check it
     if (JWT) {
         //If the JWT was verified, I sent them the info, if not, clear the cookie
-        if (verifyJWT(jwt))
-            res.send(getJWTInfo(jwt));
+        if (verifyJWT(JWT))
+            res.send(getJWTInfo(JWT));
         else {
             res.clearCookie("jwt");
             res.send({ msg: "invalid session" });
@@ -137,10 +137,11 @@ server.get("/login", (req, res) => {
     else {
         //The JWT was not sent, so we are going to try with login and password
         if (verifyPassword(password, realPassword)) {
+            let payload = { username, ip: req.ip };
             //If the password is the same as the stored, generate new JWT with info and send it
-            JWT = generateJWT({ username, ip: req.ip });
+            JWT = generateJWT(payload);
             res.cookie("jwt", JWT, { "httpOnly": true });
-            res.send({ msg: "JWT was sent as httpOnly cookie" });
+            res.send(payload);
         }
         else {
             //If not JWT and no correct login sent, don't do nothing
