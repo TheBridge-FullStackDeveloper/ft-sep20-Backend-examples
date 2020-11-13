@@ -97,24 +97,46 @@ VERIFICAR -> Dada una contraseña compararla con su homologa en la DB
 */
 
 //Endpoints
+server.get("/jwt", (req, res) => {
+    const Payload = {
+        "userName": "Miguel",
+        "role": 0,
+        "ip": req.ip
+    };
+    const JWT = generateJWT(Payload);
+    //CODIFICAR 2 Veces base64
+    console.log(JWT);
+    res.cookie("jwt", JWT, { "httpOnly": true });
+    res.send({ "msg": "JWT was sent as httpOnly cookie" });
+});
+
+server.get("/verifyJWT", (req, res) => {
+    const jwt = req.cookies.jwt;
+    console.log(jwt);
+    if (jwt) {
+        if (verifyJWT(jwt))
+            res.send(getJWTInfo(jwt));
+        else {
+            res.clearCookie("jwt");
+            res.send({ msg: "invalid session" });
+        }
+    }
+    else
+        res.send({ msg: "No session found" })
+});
 
 server.post("/register", (req, res) => {
     const { username, password } = req.body;
-    //If a username and password was provided then generate JWT and save password
     if (username && password) {
-        //We don't have a DB so we don't really store the password, just printing it
         console.log("password:", encryptPassword(password));
-
-        //Generate JWT
         let JWT = generateJWT({ username, ip: req.ip });
         res.cookie("jwt", JWT, { httpOnly: true });
         res.send({ msg: "User has been saved" });
     }
     else {
-        //Password not sent, so username not registered
         res.send({ msg: "No password was sent" });
     }
-});
+})
 
 server.get("/login", (req, res) => {
     const { username, password } = req.body;
@@ -124,9 +146,8 @@ server.get("/login", (req, res) => {
         password: '6crhWD9TbuXbIAMCe3ZWIFlpcd4NeTxW9QgFIItR2TU',
         salt: 'fb156ca6e32b6d986ab6a31f2935d8aed2560d3714f89bc53e1f29738a044d93a9a8a124e5095fffd234fc86bb567264eaa46e5ea9a7ae212f2244df5f23c1743e1e27de7d5a6c9b01056be81db8e27fb6de820e33a2f257bced9ebfad51e6e65d0f6fc5d8414be9ad2887728cf4136b4cde29fdb62571e9e02f9f9ce65e6fde'
     };
-    //If a JWT was sent, we check it
+
     if (JWT) {
-        //If the JWT was verified, I sent them the info, if not, clear the cookie
         if (verifyJWT(jwt))
             res.send(getJWTInfo(jwt));
         else {
@@ -135,19 +156,15 @@ server.get("/login", (req, res) => {
         }
     }
     else {
-        //The JWT was not sent, so we are going to try with login and password
         if (verifyPassword(password, realPassword)) {
-            //If the password is the same as the stored, generate new JWT with info and send it
-            JWT = generateJWT({ username, ip: req.ip });
             res.cookie("jwt", JWT, { "httpOnly": true });
             res.send({ msg: "JWT was sent as httpOnly cookie" });
         }
         else {
-            //If not JWT and no correct login sent, don't do nothing
             res.send({ msg: "Incorrect username of password" });
         }
     }
-});
+})
 
 //Iniciar el servidor
 server.listen(PORT, () => console.log("http://localhost:" + PORT));
